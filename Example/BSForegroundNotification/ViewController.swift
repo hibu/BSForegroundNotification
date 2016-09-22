@@ -80,7 +80,7 @@ class ViewController: UIViewController, BSForegroundNotificationDelegate {
     
     //MARK: - BSForegroundNotificationDelegate
     
-    func foregroundRemoteNotificationWasTouched(userInfo: [NSObject: AnyObject]) {
+    func foregroundRemoteNotificationWasTouched(userInfo: [AnyHashable: Any]) {
         responseLabel.text = "touched"
     }
     
