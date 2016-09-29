@@ -51,7 +51,7 @@ class BSForegroundNotificationView: UIView, UITextViewDelegate {
     
     private var currentHeightContainerLayoutConstraint: NSLayoutConstraint?
     
-    private var initialHeightForNotification: CGFloat = 80
+    private var initialHeightForNotification: CGFloat = 100 //+20
     private var shouldShowTextView: Bool {
         
         get {
@@ -68,10 +68,10 @@ class BSForegroundNotificationView: UIView, UITextViewDelegate {
         
         get {
             
-            var height = heightForText(subtitleLabel.text ?? "", width: subtitleLabel.frame.size.width) + 65
+            var height = heightForText(subtitleLabel.text ?? "", width: subtitleLabel.frame.size.width) + 75
             
             if let _ = currentHeightContainerLayoutConstraint {
-                height += 50
+                height += 60
             }
             
             return height
@@ -314,7 +314,7 @@ class BSForegroundNotificationView: UIView, UITextViewDelegate {
         
         tapGestureRecognizer.isEnabled = false
         panGestureRecognizer.isEnabled = false
-        sender.alpha = 0.2
+        sender.alpha = 0.9
     }
     
     @IBAction func actionButtonLeft(_ sender: UIButton) {
