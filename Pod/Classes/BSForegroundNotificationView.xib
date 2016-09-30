@@ -68,13 +68,12 @@
                             </subviews>
                             <color key="backgroundColor" red="1" green="1" blue="1" alpha="0.75747168624161076" colorSpace="calibratedRGB"/>
                             <constraints>
-                                <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="pZy-Et-mlM" secondAttribute="bottom" constant="8" id="8Pk-MF-VoA"/>
+                                <constraint firstItem="THU-gD-Has" firstAttribute="centerY" secondItem="njU-J6-ie6" secondAttribute="centerY" id="5O1-CI-c91"/>
                                 <constraint firstItem="THU-gD-Has" firstAttribute="leading" secondItem="pZy-Et-mlM" secondAttribute="trailing" constant="9" id="DKf-LY-LIC"/>
                                 <constraint firstItem="pZy-Et-mlM" firstAttribute="leading" secondItem="njU-J6-ie6" secondAttribute="leading" constant="8" id="LeT-ee-Yg9"/>
                                 <constraint firstAttribute="trailing" secondItem="THU-gD-Has" secondAttribute="trailing" constant="20" id="R5l-Fh-tcl"/>
-                                <constraint firstAttribute="bottom" secondItem="THU-gD-Has" secondAttribute="bottom" id="rTs-vz-kF0"/>
-                                <constraint firstItem="THU-gD-Has" firstAttribute="top" secondItem="pZy-Et-mlM" secondAttribute="top" constant="-8" id="t52-FE-Znv"/>
-                                <constraint firstItem="pZy-Et-mlM" firstAttribute="top" secondItem="njU-J6-ie6" secondAttribute="top" constant="8" id="xC2-vc-NGc"/>
+                                <constraint firstItem="pZy-Et-mlM" firstAttribute="centerY" secondItem="njU-J6-ie6" secondAttribute="centerY" id="SmN-dp-8XN"/>
+                                <constraint firstAttribute="height" constant="35" id="rG5-II-iUp"/>
                             </constraints>
                         </view>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="755" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="N6a-d0-exs">
@@ -253,14 +252,14 @@
                         <constraint firstAttribute="bottom" secondItem="D6Q-pj-aYn" secondAttribute="bottom" id="2rs-fh-UTh"/>
                         <constraint firstAttribute="width" relation="lessThanOrEqual" constant="600" id="CAO-lx-9Nc"/>
                         <constraint firstAttribute="trailing" secondItem="N6a-d0-exs" secondAttribute="trailing" constant="20" id="CR0-Wo-zX1"/>
-                        <constraint firstItem="D6Q-pj-aYn" firstAttribute="top" secondItem="N6a-d0-exs" secondAttribute="bottom" id="DIl-X9-dmP"/>
+                        <constraint firstItem="D6Q-pj-aYn" firstAttribute="top" secondItem="N6a-d0-exs" secondAttribute="bottom" constant="5" id="DIl-X9-dmP"/>
                         <constraint firstItem="njU-J6-ie6" firstAttribute="top" secondItem="jnu-fM-ypR" secondAttribute="top" id="GHA-da-RPu"/>
                         <constraint firstItem="njU-J6-ie6" firstAttribute="leading" secondItem="jnu-fM-ypR" secondAttribute="leading" id="OOT-vp-wr8"/>
                         <constraint firstItem="D6Q-pj-aYn" firstAttribute="leading" secondItem="jnu-fM-ypR" secondAttribute="leading" id="PQX-CX-JnI"/>
                         <constraint firstItem="N6a-d0-exs" firstAttribute="leading" secondItem="jnu-fM-ypR" secondAttribute="leading" constant="20" id="gNS-vP-aWN"/>
                         <constraint firstAttribute="trailing" secondItem="D6Q-pj-aYn" secondAttribute="trailing" id="iCs-1e-WFO"/>
                         <constraint firstAttribute="trailing" secondItem="njU-J6-ie6" secondAttribute="trailing" id="tvc-Qo-hmO"/>
-                        <constraint firstItem="N6a-d0-exs" firstAttribute="top" secondItem="njU-J6-ie6" secondAttribute="bottom" id="uYY-oY-LyE"/>
+                        <constraint firstItem="N6a-d0-exs" firstAttribute="top" secondItem="njU-J6-ie6" secondAttribute="bottom" constant="5" id="uYY-oY-LyE"/>
                     </constraints>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
