@@ -68,8 +68,8 @@ class ViewController: UIViewController, BSForegroundNotificationDelegate {
         return ["aps": [
             "category": category,
             "alert": [
-                "body": "Hello this is a big body, you can do this if you want. A very nice notification sis for you since now. available on GIthub for free. Is not this beautiful?:-)",
-                "title": "Super notification title"
+                "body": "Hello",
+                "title": "Super"
             ],
             "sound": "sound.wav"
             ]
