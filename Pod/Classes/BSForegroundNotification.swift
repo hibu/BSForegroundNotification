@@ -50,7 +50,7 @@ open class BSForegroundNotification {
     public init(titleLabel: String?, subtitleLabel: String?, categoryIdentifier: String?, soundName: String?, userInfo: [AnyHashable: Any]?, localNotification: UILocalNotification?) {
         
         foregroundNotificationView.titleLabel.text = titleLabel
-        foregroundNotificationView.subtitleLabel.text = subtitleLabel
+        foregroundNotificationView.subtitleTextView.text = subtitleLabel
         foregroundNotificationView.categoryIdentifier = categoryIdentifier
         foregroundNotificationView.soundName = soundName
         

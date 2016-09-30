@@ -63,7 +63,7 @@ class ViewController: UIViewController, BSForegroundNotificationDelegate {
     
     //MARK: - Private
     
-    fileprivate func userInfoForCategory(_ category: String) -> [AnyHashable: Any] {
+    private func userInfoForCategory(_ category: String) -> [AnyHashable: Any] {
         
         return ["aps": [
             "category": category,
