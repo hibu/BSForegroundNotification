@@ -51,7 +51,16 @@ class BSForegroundNotificationView: UIView, UITextViewDelegate {
     
     private var currentHeightContainerLayoutConstraint: NSLayoutConstraint?
     
-    private var initialHeightForNotification: CGFloat = 100 //+20
+    private var dimmingView = UIView()
+    
+    private var initialHeightForNotification: CGFloat = 100
+    private var currentHeightOfKeyboard: CGFloat = 0 {
+        
+        didSet {
+            updateNotificationHeight()
+        }
+    }
+    
     private var shouldShowTextView: Bool {
         
         get {
@@ -68,13 +77,22 @@ class BSForegroundNotificationView: UIView, UITextViewDelegate {
         
         get {
             
-            var height = heightForText(subtitleLabel.text ?? "", width: subtitleLabel.frame.size.width) + 75
+            var height = heightForText(subtitleLabel.text ?? "", width: subtitleLabel.frame.size.width) + 20 + 35 + 10
             
-            if let _ = currentHeightContainerLayoutConstraint {
-                height += 60
+            if rightUserNotificationAction != nil {
+                
+                height += 45
+                
+                if currentUserNotificationTextFieldAction != nil {
+                    height += 10
+                }
+                
+                if !textView.text.characters.isEmpty {
+                    height += max(textView.contentSize.height + 20, 55) - 55
+                }
             }
-            
-            return height
+        
+            return min(height, UIApplication.shared.keyWindow!.bounds.size.height - currentHeightOfKeyboard)
         }
     }
     
@@ -132,6 +150,8 @@ class BSForegroundNotificationView: UIView, UITextViewDelegate {
         appIconImageView.image = UIImage(named: "AppIcon40x40")
         
         NotificationCenter.default.addObserver(self, selector: #selector(orientationDidChange), name: .UIDeviceOrientationDidChange, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: .UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: .UIKeyboardWillHide, object: nil)
     }
     
     //MARK: - Deinitialization
@@ -238,9 +258,11 @@ class BSForegroundNotificationView: UIView, UITextViewDelegate {
             if let behavior = leftUserNotificationAction?.behavior , behavior == .textInput {
                 
                 currentUserNotificationTextFieldAction = leftUserNotificationAction
-                heightTextContainerLayoutConstraint.constant = 50
+                heightTextContainerLayoutConstraint.constant = 55
                 heightDoubleButtonsLayoutConstraint.constant = 0
                 textView.becomeFirstResponder()
+                
+                self.updateNotificationHeight()
                 
                 readyToDismiss = false
             }
@@ -335,6 +357,18 @@ class BSForegroundNotificationView: UIView, UITextViewDelegate {
     
     //MARK: - Internal
     
+    func keyboardWillShow(notification: NSNotification) {
+        currentHeightOfKeyboard = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.size.height ?? 0
+    }
+    
+    func keyboardWillHide() {
+        currentHeightOfKeyboard = 0
+    }
+    
+    func dimmingViewTapped(tapRecognizer: UITapGestureRecognizer) {
+        dismissNotification()
+    }
+    
     func orientationDidChange() {
         
         if extendingIsFinished {
@@ -384,6 +418,7 @@ class BSForegroundNotificationView: UIView, UITextViewDelegate {
         
         UIView.animate(withDuration: 0.5, animations: {
             
+            self.heightTextContainerLayoutConstraint.constant = 0
             self.topConstraintNotification.constant = 0
             self.superview?.layoutIfNeeded()
         }) 
@@ -413,11 +448,13 @@ class BSForegroundNotificationView: UIView, UITextViewDelegate {
         UIView.animate(withDuration: 1, delay: 0, usingSpringWithDamping: 0.6, initialSpringVelocity: 1, options: .beginFromCurrentState, animations: {
             
             self.topConstraintNotification.constant = -self.heightConstraintNotification.constant
+            self.dimmingView.alpha = 0
             self.superview?.layoutIfNeeded()
             
             }, completion: { finished in
                 
                 self.removeFromSuperview()
+                self.dimmingView.removeFromSuperview()
                 
                 if let _ = BSForegroundNotification.pendingForegroundNotifications.first {
                     BSForegroundNotification.pendingForegroundNotifications.removeFirst()
@@ -470,7 +507,33 @@ class BSForegroundNotificationView: UIView, UITextViewDelegate {
         }
     }
     
+    private func setupDimmingView() {
+        
+        let window = UIApplication.shared.keyWindow!
+        
+        dimmingView.frame = window.frame
+        dimmingView.alpha = 0.01
+        dimmingView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dimmingViewTapped)))
+        dimmingView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
+        
+        let visualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .light))
+        
+        visualEffectView.frame = dimmingView.bounds
+        visualEffectView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
+        
+        dimmingView.addSubview(visualEffectView)
+        window.insertSubview(dimmingView, belowSubview: self)
+    }
+    
     private func presentView() {
+        
+        setupDimmingView()
+        
+        UIView.animate(withDuration: 0.2) {
+            
+            self.dimmingView.alpha = 1
+            self.superview?.layoutIfNeeded()
+        }
         
         UIView.animate(withDuration: 1, delay: 0, usingSpringWithDamping: 0.6, initialSpringVelocity: 1, options: .beginFromCurrentState, animations: {
             
@@ -480,10 +543,10 @@ class BSForegroundNotificationView: UIView, UITextViewDelegate {
             self.singleActionButton.alpha = 1
             self.textView.alpha = 1
             self.sendButton.alpha = 1
-            self.currentHeightContainerLayoutConstraint?.constant = 50
+            self.currentHeightContainerLayoutConstraint?.constant = self.shouldShowTextView ? 55 : 45
             self.heightPullViewLayoutConstraint.constant = 0
             
-            self.layoutIfNeeded()
+            self.superview?.layoutIfNeeded()
             
             }, completion: { _ in
                 
@@ -492,8 +555,6 @@ class BSForegroundNotificationView: UIView, UITextViewDelegate {
                 if self.shouldShowTextView {
                     self.textView.becomeFirstResponder()
                 }
-                
-                
         })
     }
     
@@ -502,20 +563,25 @@ class BSForegroundNotificationView: UIView, UITextViewDelegate {
         UIView.animate(withDuration: 1, delay: 0, usingSpringWithDamping: 0.6, initialSpringVelocity: 1, options: .beginFromCurrentState, animations: {
             
             self.topConstraintNotification.constant = 0
-            self.layoutIfNeeded()
-            
+            self.superview?.layoutIfNeeded()
         })
     }
     
-    private func updateNotificationHeightWithNewTextViewHeight(_ height: CGFloat) {
+    private func updateNotificationHeight() {
+        
+        var height = initialHeightForNotification
+        
+        if extendingIsFinished {
+            height = maxHeightOfNotification
+        }
         
         UIView.animate(withDuration: 0.4, animations: {
             
-            self.heightTextContainerLayoutConstraint?.constant = height
-            self.heightConstraintNotification.constant = self.maxHeightOfNotification + height - 50
+            self.heightTextContainerLayoutConstraint?.constant = max(self.textView.contentSize.height + 20, 55)
+            self.heightConstraintNotification.constant = height
             
-            self.layoutIfNeeded()
-        }) 
+            self.superview?.layoutIfNeeded()
+        })
     }
     
     private func heightForText(_ text: String, width: CGFloat) -> CGFloat {
@@ -525,7 +591,6 @@ class BSForegroundNotificationView: UIView, UITextViewDelegate {
         label.lineBreakMode = .byWordWrapping
         label.font = UIFont.systemFont(ofSize: 14)
         label.text = text
-        
         label.sizeToFit()
         
         return label.frame.height
@@ -536,11 +601,6 @@ class BSForegroundNotificationView: UIView, UITextViewDelegate {
     //MARK: - UITextViewDelegate
     
     func textViewDidChange(_ textView: UITextView) {
-        
-        if textView.text.characters.isEmpty {
-            updateNotificationHeightWithNewTextViewHeight(50)
-        } else {
-            updateNotificationHeightWithNewTextViewHeight(max(textView.contentSize.height + 20, 50))
-        }
+        updateNotificationHeight()
     }
 }
